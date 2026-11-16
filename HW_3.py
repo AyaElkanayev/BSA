@@ -25,19 +25,18 @@ def generatePoiSpikes(r, dt, totalSize, tRef=0):
 # 1c FF - single spike train
 def calcFF(spikeTrain, windows, duration): # recording cut into windows
     # compute var/mean of the spike counts
-    edges = np.arange(0, duration + 1e-9, windows) * 1000
+    edges = np.arange(0, duration + 1e-9, windows) * 1000 # adding a tiny number moves the stop just past 60
     counts, _ = np.histogram(spikeTrain, edges)
     return counts.var()/counts.mean()
 
 # 1d CV of ISIs
 def calcCV(spikeTrain):
     isi = np.diff(spikeTrain)
-    return isi.std() / isi.mean()
-
-np.random.seed(3)
+    return isi.std()/isi.mean()
 
 
 # Q2
+np.random.seed(3)
 
 # 2a
 r0, dt, T = 30, 0.001, 60
@@ -49,11 +48,11 @@ trains = {
     "rawSpikes2": loadmat("rawSpikes2.mat")["spikes"].ravel(),
 }
 
-# recording length in s (time of the last spike)
+# recording length in s
 durations = {name: T if name.startswith("Poisson") else st[-1] / 1000
              for name, st in trains.items()}
 
-# i
+# i first second
 fig, axs = plt.subplots(4, 1, figsize=(10, 6), sharex=True)
 for ax, (name, st) in zip(axs, trains.items()):
     ax.eventplot(st[st < 1000])
@@ -61,7 +60,7 @@ for ax, (name, st) in zip(axs, trains.items()):
     ax.set_yticks([])
 axs[-1].set_xlabel("Time [ms]")
 fig.tight_layout()
-fig.savefig("fig1_spike_trains.png", dpi=150)
+fig.savefig("2a_i_spike_trains.png", dpi=150)
 
 # ii
 fig, axs = plt.subplots(2, 2, figsize=(11, 7))
@@ -71,7 +70,7 @@ for ax, (name, st) in zip(axs.ravel(), trains.items()):
     ax.set_xlabel("ISI [ms]")
     ax.set_ylabel("Probability density")
 fig.tight_layout()
-fig.savefig("fig2_TIH.png", dpi=150)
+fig.savefig("2a_ii_TIH.png", dpi=150)
 
 # iii and iv
 print(f"{'train':22s} FF(0.1s) FF(1s) FF(3s)    CV  CV^2")
