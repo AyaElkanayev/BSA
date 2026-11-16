@@ -37,8 +37,6 @@ def calcCV(spikeTrain):
 
 # Q2
 np.random.seed(3)
-
-# 2a
 r0, dt, T = 30, 0.001, 60
 nBins = int(T / dt)
 trains = {
@@ -48,10 +46,10 @@ trains = {
     "rawSpikes2": loadmat("rawSpikes2.mat")["spikes"].ravel(),
 }
 
-# recording length in s
 durations = {name: T if name.startswith("Poisson") else st[-1] / 1000
              for name, st in trains.items()}
 
+# 2a
 # i first second
 fig, axs = plt.subplots(4, 1, figsize=(10, 6), sharex=True)
 for ax, (name, st) in zip(axs, trains.items()):
@@ -73,7 +71,7 @@ fig.tight_layout()
 fig.savefig("2a_ii_TIH.png", dpi=150)
 
 # iii and iv
-print(f"{'train':22s} FF(0.1s) FF(1s) FF(3s)    CV  CV^2")
+print(f"{'train':22s} FF(0.1s) FF(1s) FF(3s)  CV  CV^2")
 for name, st in trains.items():
     ff = [calcFF(st, w, durations[name]) for w in (0.1, 1, 3)]
     cv = calcCV(st)
